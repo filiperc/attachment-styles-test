@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attachment Style Assessment</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .intro {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .intro p {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .intro ul {
+            margin-left: 20px;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .intro li {
+            margin-bottom: 8px;
+        }
+
+        .start-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .start-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .emotional-state {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .situation {
+            font-size: 1.15em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f0f3ff;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .option-text {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .next-btn {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+
+        .next-btn:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .prev-btn {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .prev-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .results-description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .score-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .score-card.anxious {
+            border-left-color: #e74c3c;
+        }
+
+        .score-card.avoidant {
+            border-left-color: #f39c12;
+        }
+
+        .score-card.secure {
+            border-left-color: #27ae60;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .score-percentage {
+            font-size: 1em;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            max-width: 500px;
+            margin: 0 auto 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .interpretation {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .interpretation h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .interpretation p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .restart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .restart-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .scores {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-container" id="introContainer">
+            <h1>Attachment Style Assessment</h1>
+            <p class="subtitle">Understanding Your Relationship Patterns</p>
+
+            <div class="intro">
+                <h2>About This Test</h2>
+                <p>This assessment helps you identify your attachment patterns across different emotional states. Attachment styles describe how we relate to others in close relationships:</p>
+                <ul>
+                    <li><strong>Secure:</strong> Comfortable with intimacy and independence, trusts others, communicates needs clearly</li>
+                    <li><strong>Anxious:</strong> High need for closeness and reassurance, fears abandonment, seeks validation</li>
+                    <li><strong>Avoidant:</strong> Values independence, uncomfortable with vulnerability, keeps emotional distance</li>
+                </ul>
+
+                <h2 style="margin-top: 25px;">How It Works</h2>
+                <p>You'll read 15 scenarios across different emotional states (stressed, sad, angry, happy, etc.). For each situation, choose the response that best matches what you <strong>actually do</strong>, not what you think you "should" do.</p>
+
+                <p><strong>Important:</strong> Be honest with yourself. This assessment is for your personal growth, and there are no right or wrong answers.</p>
+            </div>
+
+            <button class="start-btn" onclick="startQuiz()">Start Assessment</button>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="question-counter" id="questionCounter"></div>
+
+            <div class="emotional-state" id="emotionalState"></div>
+
+            <div class="situation" id="situation"></div>
+
+            <div class="options" id="options"></div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="previousQuestion()">Previous</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2>Your Results</h2>
+            </div>
+
+            <div class="results-description">
+                Based on your responses across 15 scenarios in different emotional states, here's your attachment style profile:
+            </div>
+
+            <div class="scores" id="scoresContainer"></div>
+
+            <div class="chart-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <div class="interpretation">
+                <h3>What This Means</h3>
+                <p><strong>Your secure score</strong> represents how often you responded with healthy attachment behaviors—clear communication, emotional awareness, and balanced need for closeness and independence.</p>
+                <p><strong>Growth opportunity:</strong> Review the scenarios where you chose anxious or avoidant responses. The secure option in each scenario is your target behavior to practice in real life.</p>
+                <p><strong>Remember:</strong> Attachment patterns can change with awareness and practice. Use the secure responses as a guide for developing new relationship skills.</p>
+            </div>
+
+            <button class="restart-btn" onclick="restartQuiz()">Take Assessment Again</button>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [{"id": 1, "emotional_state": "Stressed / Overloaded", "situation": "You had a very intense day at work and you feel mentally exhausted. Your partner sends a long message asking about something emotionally important and you see it, but you have almost no energy left to answer now.", "option_anxious": "I panic, feel guilty, and force myself to answer everything right now in detail, even though I'm exhausted, because I'm afraid they'll feel hurt or abandon me if I don't.", "option_avoidant": "I ignore the message, put the phone away, and tell myself it's not my problem right now, maybe I'll respond in a few days when I feel like it.", "option_secure": "I read the message, notice I have no energy, and reply: 'Thank you for sharing this, it's important to me. I'm really tired now and want to give you a proper answer. Can I reply tomorrow when I have more energy?' Then I follow through the next day."}, {"id": 2, "emotional_state": "Sad / Hurt", "situation": "You felt ignored by your partner in a social situation and you are now at home, feeling sad and a bit rejected.", "option_anxious": "I bombard them with messages or calls, asking if they still love me, needing immediate reassurance and answers.", "option_avoidant": "I shut down, tell myself 'whatever, I don't care', avoid talking about it, and emotionally distance for days.", "option_secure": "I give myself a bit of time to feel what I feel, then say: 'Earlier I felt a bit ignored and it hurt; can we talk about what happened when you have a moment?'"}, {"id": 3, "emotional_state": "Angry / Frustrated", "situation": "Your partner forgot to do something they promised, and you feel frustrated because this has happened before.", "option_anxious": "I get very emotional, raise my voice, bring up all past mistakes, and demand they prove they care about me right now.", "option_avoidant": "I say 'forget it' in a cold tone, withdraw completely, and decide not to rely on them for anything anymore.", "option_secure": "I take a breath and say: 'I'm frustrated because this was important to me and it's happened before. Can we talk about how to prevent this going forward?'"}, {"id": 4, "emotional_state": "Afraid / Insecure", "situation": "Your partner has been quieter than usual for two days and you don't know why.", "option_anxious": "I constantly ask 'Are you mad at me?' 'Did I do something wrong?' and analyze every word they say, fearing they want to leave.", "option_avoidant": "I don't ask anything. If they have a problem, they can bring it up. I assume they're fine and keep my distance.", "option_secure": "I notice and gently ask: 'I've noticed you've been a bit quiet lately. Is everything okay? I'm here if you want to talk.'"}, {"id": 5, "emotional_state": "Vulnerable / Needing Closeness", "situation": "You're feeling lonely and would really like some quality time or affection from your partner.", "option_anxious": "I hint, complain ('You never spend time with me'), or create drama to get attention because I'm afraid to ask directly.", "option_avoidant": "I tell myself I don't need anyone, distract myself with work or hobbies, and avoid expressing the need altogether.", "option_secure": "I say clearly: 'I've been feeling a bit disconnected lately and I'd love to spend some quality time together. Are you free this weekend?'"}, {"id": 6, "emotional_state": "Conflict / Disagreement", "situation": "You and your partner are in a heated argument about finances and things are escalating.", "option_anxious": "I panic that the relationship is falling apart, cry, plead, or agree to anything just to stop the conflict and get reassurance.", "option_avoidant": "I shut down emotionally, say 'I'm done with this conversation,' and leave the room or the house to avoid dealing with it.", "option_secure": "I notice the escalation and say: 'We're both getting heated. Let's take a 20-minute break and come back to this when we're calmer.'"}, {"id": 7, "emotional_state": "Happy / Excited", "situation": "You had amazing news at work (promotion, project success) and you want to share it with your partner.", "option_anxious": "I share it but immediately look for validation and reassurance: 'Are you proud of me?' 'Do you think I deserve it?' needing their approval to feel good.", "option_avoidant": "I downplay it or don't mention it at all, thinking 'they probably don't care' or 'I don't need their reaction.'", "option_secure": "I share enthusiastically: 'I got great news today! I'm really excited and wanted to tell you!' and enjoy their response without needing excessive validation."}, {"id": 8, "emotional_state": "Calm / Neutral", "situation": "Your partner asks if you can talk about planning a trip together next month.", "option_anxious": "I immediately over-plan everything, ask constantly if they're excited too, and worry they'll cancel or lose interest.", "option_avoidant": "I feel pressured and say 'let's see' or 'maybe,' avoiding commitment because I value my independence and don't want obligations.", "option_secure": "I say: 'Sure, I'd like that. Let's look at some dates and ideas together and see what works for both of us.'"}, {"id": 9, "emotional_state": "Stressed / Overloaded", "situation": "You're behind on personal tasks and your partner asks you to help with something that will take a few hours.", "option_anxious": "I say yes even though I'm overwhelmed, sacrifice my own needs, and later feel resentful but don't say anything because I fear conflict.", "option_avoidant": "I dismiss their request or get irritated: 'I have my own stuff to deal with,' and refuse without exploring compromise.", "option_secure": "I respond: 'I'd like to help, but I'm really behind right now. Can we do it tomorrow, or is there a smaller part I can help with today?'"}, {"id": 10, "emotional_state": "Vulnerable / Needing Closeness", "situation": "Your partner sets a boundary, saying they need one evening per week alone to recharge.", "option_anxious": "I feel rejected and abandoned, interpret it as 'they don't love me,' and protest or try to negotiate it away.", "option_avoidant": "I feel relieved and think 'good, I need space too,' but don't check in on their emotional needs or show I care about their well-being.", "option_secure": "I feel a bit vulnerable but say: 'I understand you need time to recharge. Thanks for telling me. Let's make sure we also have quality time together.'"}, {"id": 11, "emotional_state": "Afraid / Insecure", "situation": "Your partner mentions an ex-partner casually in conversation.", "option_anxious": "I spiral into jealousy and insecurity, ask questions like 'Do you still have feelings for them?' and need constant reassurance.", "option_avoidant": "I act like I don't care at all, make a dismissive comment, or build an emotional wall to protect myself from feeling threatened.", "option_secure": "I notice a small pang of insecurity but recognize it's normal. I listen without reacting defensively and trust the relationship."}, {"id": 12, "emotional_state": "Sad / Hurt", "situation": "Your partner gave you critical feedback about something personal (your communication style, a habit, etc.).", "option_anxious": "I feel crushed, overly self-blaming, and immediately seek reassurance: 'Do you still love me?' 'Am I a bad person?'", "option_avoidant": "I dismiss the feedback: 'You're too sensitive' or 'That's just how I am,' and shut down the conversation to avoid vulnerability.", "option_secure": "I feel the sting but take a breath and say: 'That's hard to hear, but I want to understand. Can you give me an example so I can reflect on it?'"}, {"id": 13, "emotional_state": "Angry / Frustrated", "situation": "You've asked your partner multiple times to help more with household tasks and nothing has changed.", "option_anxious": "I explode emotionally, cry, or threaten the relationship: 'If you cared you would help!' while fearing they'll leave if I'm too demanding.", "option_avoidant": "I stop asking, do everything myself in resentful silence, and emotionally check out of the relationship.", "option_secure": "I sit down and say firmly but calmly: 'This is important to me and it hasn't changed. We need to find a solution together or this will keep being a problem.'"}, {"id": 14, "emotional_state": "Conflict / Disagreement", "situation": "Your partner criticizes something you did in front of friends and you feel embarrassed.", "option_anxious": "I stay silent but ruminate for hours or days, then bring it up in an emotional outburst seeking apology and validation.", "option_avoidant": "I make a sarcastic comment back or ice them out for days, refusing to discuss what happened.", "option_secure": "Later, in private, I say: 'When you criticized me in front of our friends, I felt embarrassed. I'd appreciate if we could talk about these things privately.'"}, {"id": 15, "emotional_state": "Happy / Excited", "situation": "Your partner shares exciting personal news (new hobby, achievement, personal growth moment).", "option_anxious": "I feel happy but also insecure\u2014'Are they outgrowing me?'\u2014and I make it about the relationship: 'Does this mean you'll have less time for me?'", "option_avoidant": "I give a brief, unenthusiastic response: 'That's nice,' and change the subject, uncomfortable with their emotional openness.", "option_secure": "I respond with genuine enthusiasm: 'That's amazing! Tell me more!' and share in their joy without making it about myself."}];
+
+        let currentQuestion = 0;
+        let answers = new Array(scenarios.length).fill(null);
+
+        function startQuiz() {
+            document.getElementById('introContainer').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            currentQuestion = index;
+            const scenario = scenarios[index];
+
+            // Update progress
+            const progress = ((index + 1) / scenarios.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update counter
+            document.getElementById('questionCounter').textContent = `Question ${index + 1} of ${scenarios.length}`;
+
+            // Update emotional state
+            document.getElementById('emotionalState').textContent = scenario.emotional_state;
+
+            // Update situation
+            document.getElementById('situation').textContent = scenario.situation;
+
+            // Update options
+            const optionsHtml = `
+                <div class="option ${answers[index] === 'anxious' ? 'selected' : ''}" onclick="selectOption('anxious')">
+                    <div class="option-label">A) Anxious Response</div>
+                    <div class="option-text">${scenario.option_anxious}</div>
+                </div>
+                <div class="option ${answers[index] === 'avoidant' ? 'selected' : ''}" onclick="selectOption('avoidant')">
+                    <div class="option-label">B) Avoidant Response</div>
+                    <div class="option-text">${scenario.option_avoidant}</div>
+                </div>
+                <div class="option ${answers[index] === 'secure' ? 'selected' : ''}" onclick="selectOption('secure')">
+                    <div class="option-label">C) Secure Response</div>
+                    <div class="option-text">${scenario.option_secure}</div>
+                </div>
+            `;
+            document.getElementById('options').innerHTML = optionsHtml;
+
+            // Update buttons
+            document.getElementById('prevBtn').style.visibility = index === 0 ? 'hidden' : 'visible';
+            document.getElementById('nextBtn').disabled = answers[index] === null;
+            document.getElementById('nextBtn').textContent = index === scenarios.length - 1 ? 'See Results' : 'Next';
+        }
+
+        function selectOption(type) {
+            answers[currentQuestion] = type;
+            showQuestion(currentQuestion);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < scenarios.length - 1) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function showResults() {
+            // Calculate scores
+            const anxiousCount = answers.filter(a => a === 'anxious').length;
+            const avoidantCount = answers.filter(a => a === 'avoidant').length;
+            const secureCount = answers.filter(a => a === 'secure').length;
+
+            const total = scenarios.length;
+            const anxiousPercent = Math.round((anxiousCount / total) * 100);
+            const avoidantPercent = Math.round((avoidantCount / total) * 100);
+            const securePercent = Math.round((secureCount / total) * 100);
+
+            // Hide quiz, show results
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+
+            // Display scores
+            document.getElementById('scoresContainer').innerHTML = `
+                <div class="score-card anxious">
+                    <div class="score-label">Anxious</div>
+                    <div class="score-value">${anxiousCount}</div>
+                    <div class="score-percentage">${anxiousPercent}%</div>
+                </div>
+                <div class="score-card avoidant">
+                    <div class="score-label">Avoidant</div>
+                    <div class="score-value">${avoidantCount}</div>
+                    <div class="score-percentage">${avoidantPercent}%</div>
+                </div>
+                <div class="score-card secure">
+                    <div class="score-label">Secure</div>
+                    <div class="score-value">${secureCount}</div>
+                    <div class="score-percentage">${securePercent}%</div>
+                </div>
+            `;
+
+            // Create radar chart
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Anxious', 'Avoidant', 'Secure'],
+                    datasets: [{
+                        label: 'Your Attachment Profile',
+                        data: [anxiousCount, avoidantCount, secureCount],
+                        fill: true,
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgb(102, 126, 234)',
+                        pointBackgroundColor: 'rgb(102, 126, 234)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(102, 126, 234)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: total,
+                            ticks: {
+                                stepSize: Math.ceil(total / 5)
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(scenarios.length).fill(null);
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('introContainer').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
