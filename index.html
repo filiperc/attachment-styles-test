@@ -257,15 +257,15 @@
             border-left: 4px solid;
         }
 
-        .score-card.anxious {
+        .score-card.pattern-a {
             border-left-color: #e74c3c;
         }
 
-        .score-card.avoidant {
+        .score-card.pattern-b {
             border-left-color: #f39c12;
         }
 
-        .score-card.secure {
+        .score-card.pattern-c {
             border-left-color: #27ae60;
         }
 
@@ -316,23 +316,87 @@
             margin-bottom: 10px;
         }
 
-        .restart-btn {
+        .growth-areas {
+            background: #fff8e1;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .growth-areas h3 {
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+
+        .growth-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #f39c12;
+        }
+
+        .growth-item-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .growth-item-situation {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .growth-item-response {
+            color: #999;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .growth-item-better {
+            color: #27ae60;
+            font-size: 0.95em;
+            padding: 10px;
+            background: #f0f8f4;
+            border-radius: 5px;
+            margin-top: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .action-btn {
             background: #667eea;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1em;
+            padding: 12px 30px;
+            font-size: 1em;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
-            display: block;
-            margin: 30px auto 0;
         }
 
-        .restart-btn:hover {
+        .action-btn:hover {
             background: #5568d3;
             transform: translateY(-2px);
+        }
+
+        .action-btn.secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .action-btn.secondary:hover {
+            background: #d0d0d0;
         }
 
         @media (max-width: 600px) {
@@ -347,6 +411,14 @@
             .scores {
                 grid-template-columns: 1fr;
             }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -358,15 +430,10 @@
 
             <div class="intro">
                 <h2>About This Test</h2>
-                <p>This assessment helps you identify your attachment patterns across different emotional states. Attachment styles describe how we relate to others in close relationships:</p>
-                <ul>
-                    <li><strong>Secure:</strong> Comfortable with intimacy and independence, trusts others, communicates needs clearly</li>
-                    <li><strong>Anxious:</strong> High need for closeness and reassurance, fears abandonment, seeks validation</li>
-                    <li><strong>Avoidant:</strong> Values independence, uncomfortable with vulnerability, keeps emotional distance</li>
-                </ul>
+                <p>This assessment helps you identify your relationship patterns across different emotional states. You'll see how you typically respond in various situations with your partner.</p>
 
                 <h2 style="margin-top: 25px;">How It Works</h2>
-                <p>You'll read 15 scenarios across different emotional states (stressed, sad, angry, happy, etc.). For each situation, choose the response that best matches what you <strong>actually do</strong>, not what you think you "should" do.</p>
+                <p>You'll read 20 scenarios across different emotional states (stressed, sad, angry, happy, etc.). For each situation, choose the response that best matches what you <strong>actually do</strong>, not what you think you "should" do.</p>
 
                 <p><strong>Important:</strong> Be honest with yourself. This assessment is for your personal growth, and there are no right or wrong answers.</p>
             </div>
@@ -399,7 +466,7 @@
             </div>
 
             <div class="results-description">
-                Based on your responses across 15 scenarios in different emotional states, here's your attachment style profile:
+                Based on your responses across 20 scenarios in different emotional states, here's your relationship pattern profile:
             </div>
 
             <div class="scores" id="scoresContainer"></div>
@@ -410,20 +477,27 @@
 
             <div class="interpretation">
                 <h3>What This Means</h3>
-                <p><strong>Your secure score</strong> represents how often you responded with healthy attachment behaviors—clear communication, emotional awareness, and balanced need for closeness and independence.</p>
-                <p><strong>Growth opportunity:</strong> Review the scenarios where you chose anxious or avoidant responses. The secure option in each scenario is your target behavior to practice in real life.</p>
-                <p><strong>Remember:</strong> Attachment patterns can change with awareness and practice. Use the secure responses as a guide for developing new relationship skills.</p>
+                <p><strong>Pattern C (Balanced Response)</strong> represents healthy relationship behaviors—clear communication, emotional awareness, and balanced needs for closeness and independence.</p>
+                <p><strong>Pattern A (High Closeness Need)</strong> shows responses driven by fear of abandonment and need for constant reassurance.</p>
+                <p><strong>Pattern B (High Independence Need)</strong> shows responses that prioritize emotional distance and self-reliance.</p>
+                <p><strong>Remember:</strong> These patterns can change with awareness and practice. Review your growth opportunities below.</p>
             </div>
 
-            <button class="restart-btn" onclick="restartQuiz()">Take Assessment Again</button>
+            <div class="growth-areas" id="growthAreas"></div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="shareResults()">Share Results</button>
+                <button class="action-btn secondary" onclick="restartQuiz()">Take Assessment Again</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const scenarios = [{"id": 1, "emotional_state": "Stressed / Overloaded", "situation": "You had a very intense day at work and you feel mentally exhausted. Your partner sends a long message asking about something emotionally important and you see it, but you have almost no energy left to answer now.", "option_anxious": "I panic, feel guilty, and force myself to answer everything right now in detail, even though I'm exhausted, because I'm afraid they'll feel hurt or abandon me if I don't.", "option_avoidant": "I ignore the message, put the phone away, and tell myself it's not my problem right now, maybe I'll respond in a few days when I feel like it.", "option_secure": "I read the message, notice I have no energy, and reply: 'Thank you for sharing this, it's important to me. I'm really tired now and want to give you a proper answer. Can I reply tomorrow when I have more energy?' Then I follow through the next day."}, {"id": 2, "emotional_state": "Sad / Hurt", "situation": "You felt ignored by your partner in a social situation and you are now at home, feeling sad and a bit rejected.", "option_anxious": "I bombard them with messages or calls, asking if they still love me, needing immediate reassurance and answers.", "option_avoidant": "I shut down, tell myself 'whatever, I don't care', avoid talking about it, and emotionally distance for days.", "option_secure": "I give myself a bit of time to feel what I feel, then say: 'Earlier I felt a bit ignored and it hurt; can we talk about what happened when you have a moment?'"}, {"id": 3, "emotional_state": "Angry / Frustrated", "situation": "Your partner forgot to do something they promised, and you feel frustrated because this has happened before.", "option_anxious": "I get very emotional, raise my voice, bring up all past mistakes, and demand they prove they care about me right now.", "option_avoidant": "I say 'forget it' in a cold tone, withdraw completely, and decide not to rely on them for anything anymore.", "option_secure": "I take a breath and say: 'I'm frustrated because this was important to me and it's happened before. Can we talk about how to prevent this going forward?'"}, {"id": 4, "emotional_state": "Afraid / Insecure", "situation": "Your partner has been quieter than usual for two days and you don't know why.", "option_anxious": "I constantly ask 'Are you mad at me?' 'Did I do something wrong?' and analyze every word they say, fearing they want to leave.", "option_avoidant": "I don't ask anything. If they have a problem, they can bring it up. I assume they're fine and keep my distance.", "option_secure": "I notice and gently ask: 'I've noticed you've been a bit quiet lately. Is everything okay? I'm here if you want to talk.'"}, {"id": 5, "emotional_state": "Vulnerable / Needing Closeness", "situation": "You're feeling lonely and would really like some quality time or affection from your partner.", "option_anxious": "I hint, complain ('You never spend time with me'), or create drama to get attention because I'm afraid to ask directly.", "option_avoidant": "I tell myself I don't need anyone, distract myself with work or hobbies, and avoid expressing the need altogether.", "option_secure": "I say clearly: 'I've been feeling a bit disconnected lately and I'd love to spend some quality time together. Are you free this weekend?'"}, {"id": 6, "emotional_state": "Conflict / Disagreement", "situation": "You and your partner are in a heated argument about finances and things are escalating.", "option_anxious": "I panic that the relationship is falling apart, cry, plead, or agree to anything just to stop the conflict and get reassurance.", "option_avoidant": "I shut down emotionally, say 'I'm done with this conversation,' and leave the room or the house to avoid dealing with it.", "option_secure": "I notice the escalation and say: 'We're both getting heated. Let's take a 20-minute break and come back to this when we're calmer.'"}, {"id": 7, "emotional_state": "Happy / Excited", "situation": "You had amazing news at work (promotion, project success) and you want to share it with your partner.", "option_anxious": "I share it but immediately look for validation and reassurance: 'Are you proud of me?' 'Do you think I deserve it?' needing their approval to feel good.", "option_avoidant": "I downplay it or don't mention it at all, thinking 'they probably don't care' or 'I don't need their reaction.'", "option_secure": "I share enthusiastically: 'I got great news today! I'm really excited and wanted to tell you!' and enjoy their response without needing excessive validation."}, {"id": 8, "emotional_state": "Calm / Neutral", "situation": "Your partner asks if you can talk about planning a trip together next month.", "option_anxious": "I immediately over-plan everything, ask constantly if they're excited too, and worry they'll cancel or lose interest.", "option_avoidant": "I feel pressured and say 'let's see' or 'maybe,' avoiding commitment because I value my independence and don't want obligations.", "option_secure": "I say: 'Sure, I'd like that. Let's look at some dates and ideas together and see what works for both of us.'"}, {"id": 9, "emotional_state": "Stressed / Overloaded", "situation": "You're behind on personal tasks and your partner asks you to help with something that will take a few hours.", "option_anxious": "I say yes even though I'm overwhelmed, sacrifice my own needs, and later feel resentful but don't say anything because I fear conflict.", "option_avoidant": "I dismiss their request or get irritated: 'I have my own stuff to deal with,' and refuse without exploring compromise.", "option_secure": "I respond: 'I'd like to help, but I'm really behind right now. Can we do it tomorrow, or is there a smaller part I can help with today?'"}, {"id": 10, "emotional_state": "Vulnerable / Needing Closeness", "situation": "Your partner sets a boundary, saying they need one evening per week alone to recharge.", "option_anxious": "I feel rejected and abandoned, interpret it as 'they don't love me,' and protest or try to negotiate it away.", "option_avoidant": "I feel relieved and think 'good, I need space too,' but don't check in on their emotional needs or show I care about their well-being.", "option_secure": "I feel a bit vulnerable but say: 'I understand you need time to recharge. Thanks for telling me. Let's make sure we also have quality time together.'"}, {"id": 11, "emotional_state": "Afraid / Insecure", "situation": "Your partner mentions an ex-partner casually in conversation.", "option_anxious": "I spiral into jealousy and insecurity, ask questions like 'Do you still have feelings for them?' and need constant reassurance.", "option_avoidant": "I act like I don't care at all, make a dismissive comment, or build an emotional wall to protect myself from feeling threatened.", "option_secure": "I notice a small pang of insecurity but recognize it's normal. I listen without reacting defensively and trust the relationship."}, {"id": 12, "emotional_state": "Sad / Hurt", "situation": "Your partner gave you critical feedback about something personal (your communication style, a habit, etc.).", "option_anxious": "I feel crushed, overly self-blaming, and immediately seek reassurance: 'Do you still love me?' 'Am I a bad person?'", "option_avoidant": "I dismiss the feedback: 'You're too sensitive' or 'That's just how I am,' and shut down the conversation to avoid vulnerability.", "option_secure": "I feel the sting but take a breath and say: 'That's hard to hear, but I want to understand. Can you give me an example so I can reflect on it?'"}, {"id": 13, "emotional_state": "Angry / Frustrated", "situation": "You've asked your partner multiple times to help more with household tasks and nothing has changed.", "option_anxious": "I explode emotionally, cry, or threaten the relationship: 'If you cared you would help!' while fearing they'll leave if I'm too demanding.", "option_avoidant": "I stop asking, do everything myself in resentful silence, and emotionally check out of the relationship.", "option_secure": "I sit down and say firmly but calmly: 'This is important to me and it hasn't changed. We need to find a solution together or this will keep being a problem.'"}, {"id": 14, "emotional_state": "Conflict / Disagreement", "situation": "Your partner criticizes something you did in front of friends and you feel embarrassed.", "option_anxious": "I stay silent but ruminate for hours or days, then bring it up in an emotional outburst seeking apology and validation.", "option_avoidant": "I make a sarcastic comment back or ice them out for days, refusing to discuss what happened.", "option_secure": "Later, in private, I say: 'When you criticized me in front of our friends, I felt embarrassed. I'd appreciate if we could talk about these things privately.'"}, {"id": 15, "emotional_state": "Happy / Excited", "situation": "Your partner shares exciting personal news (new hobby, achievement, personal growth moment).", "option_anxious": "I feel happy but also insecure\u2014'Are they outgrowing me?'\u2014and I make it about the relationship: 'Does this mean you'll have less time for me?'", "option_avoidant": "I give a brief, unenthusiastic response: 'That's nice,' and change the subject, uncomfortable with their emotional openness.", "option_secure": "I respond with genuine enthusiasm: 'That's amazing! Tell me more!' and share in their joy without making it about myself."}];
+        const scenarios = [{"id": 1, "emotional_state": "Stressed / Overloaded", "situation": "You had a very intense day at work and you feel mentally exhausted. Your partner sends a long message asking about something emotionally important and you see it, but you have almost no energy left to answer now.", "options": [{"type": "avoidant", "text": "I ignore the message, put the phone away, and tell myself it's not my problem right now, maybe I'll respond in a few days when I feel like it."}, {"type": "anxious", "text": "I panic, feel guilty, and force myself to answer everything right now in detail, even though I'm exhausted, because I'm afraid they'll feel hurt or abandon me if I don't."}, {"type": "secure", "text": "I read the message, notice I have no energy, and reply: 'Thank you for sharing this, it's important to me. I'm really tired now and want to give you a proper answer. Can I reply tomorrow when I have more energy?' Then I follow through the next day."}]}, {"id": 2, "emotional_state": "Sad / Hurt", "situation": "You felt ignored by your partner in a social situation and you are now at home, feeling sad and a bit rejected.", "options": [{"type": "secure", "text": "I give myself a bit of time to feel what I feel, then say: 'Earlier I felt a bit ignored and it hurt; can we talk about what happened when you have a moment?'"}, {"type": "anxious", "text": "I bombard them with messages or calls, asking if they still love me, needing immediate reassurance and answers."}, {"type": "avoidant", "text": "I shut down, tell myself 'whatever, I don't care', avoid talking about it, and emotionally distance for days."}]}, {"id": 3, "emotional_state": "Angry / Frustrated", "situation": "Your partner forgot to do something they promised, and you feel frustrated because this has happened before.", "options": [{"type": "secure", "text": "I take a breath and say: 'I'm frustrated because this was important to me and it's happened before. Can we talk about how to prevent this going forward?'"}, {"type": "avoidant", "text": "I say 'forget it' in a cold tone, withdraw completely, and decide not to rely on them for anything anymore."}, {"type": "anxious", "text": "I get very emotional, raise my voice, bring up all past mistakes, and demand they prove they care about me right now."}]}, {"id": 4, "emotional_state": "Afraid / Insecure", "situation": "Your partner has been quieter than usual for two days and you don't know why.", "options": [{"type": "avoidant", "text": "I don't ask anything. If they have a problem, they can bring it up. I assume they're fine and keep my distance."}, {"type": "anxious", "text": "I constantly ask 'Are you mad at me?' 'Did I do something wrong?' and analyze every word they say, fearing they want to leave."}, {"type": "secure", "text": "I notice and gently ask: 'I've noticed you've been a bit quiet lately. Is everything okay? I'm here if you want to talk.'"}]}, {"id": 5, "emotional_state": "Vulnerable / Needing Closeness", "situation": "You're feeling lonely and would really like some quality time or affection from your partner.", "options": [{"type": "anxious", "text": "I hint, complain ('You never spend time with me'), or create drama to get attention because I'm afraid to ask directly."}, {"type": "secure", "text": "I say clearly: 'I've been feeling a bit disconnected lately and I'd love to spend some quality time together. Are you free this weekend?'"}, {"type": "avoidant", "text": "I tell myself I don't need anyone, distract myself with work or hobbies, and avoid expressing the need altogether."}]}, {"id": 6, "emotional_state": "Conflict / Disagreement", "situation": "You and your partner are in a heated argument about finances and things are escalating.", "options": [{"type": "secure", "text": "I notice the escalation and say: 'We're both getting heated. Let's take a 20-minute break and come back to this when we're calmer.'"}, {"type": "anxious", "text": "I panic that the relationship is falling apart, cry, plead, or agree to anything just to stop the conflict and get reassurance."}, {"type": "avoidant", "text": "I shut down emotionally, say 'I'm done with this conversation,' and leave the room or the house to avoid dealing with it."}]}, {"id": 7, "emotional_state": "Happy / Excited", "situation": "You had amazing news at work (promotion, project success) and you want to share it with your partner.", "options": [{"type": "anxious", "text": "I share it but immediately look for validation and reassurance: 'Are you proud of me?' 'Do you think I deserve it?' needing their approval to feel good."}, {"type": "secure", "text": "I share enthusiastically: 'I got great news today! I'm really excited and wanted to tell you!' and enjoy their response without needing excessive validation."}, {"type": "avoidant", "text": "I downplay it or don't mention it at all, thinking 'they probably don't care' or 'I don't need their reaction.'"}]}, {"id": 8, "emotional_state": "Calm / Neutral", "situation": "Your partner asks if you can talk about planning a trip together next month.", "options": [{"type": "anxious", "text": "I immediately over-plan everything, ask constantly if they're excited too, and worry they'll cancel or lose interest."}, {"type": "avoidant", "text": "I feel pressured and say 'let's see' or 'maybe,' avoiding commitment because I value my independence and don't want obligations."}, {"type": "secure", "text": "I say: 'Sure, I'd like that. Let's look at some dates and ideas together and see what works for both of us.'"}]}, {"id": 9, "emotional_state": "Stressed / Overloaded", "situation": "You're behind on personal tasks and your partner asks you to help with something that will take a few hours.", "options": [{"type": "anxious", "text": "I say yes even though I'm overwhelmed, sacrifice my own needs, and later feel resentful but don't say anything because I fear conflict."}, {"type": "secure", "text": "I respond: 'I'd like to help, but I'm really behind right now. Can we do it tomorrow, or is there a smaller part I can help with today?'"}, {"type": "avoidant", "text": "I dismiss their request or get irritated: 'I have my own stuff to deal with,' and refuse without exploring compromise."}]}, {"id": 10, "emotional_state": "Vulnerable / Needing Closeness", "situation": "Your partner sets a boundary, saying they need one evening per week alone to recharge.", "options": [{"type": "secure", "text": "I feel a bit vulnerable but say: 'I understand you need time to recharge. Thanks for telling me. Let's make sure we also have quality time together.'"}, {"type": "avoidant", "text": "I feel relieved and think 'good, I need space too,' but don't check in on their emotional needs or show I care about their well-being."}, {"type": "anxious", "text": "I feel rejected and abandoned, interpret it as 'they don't love me,' and protest or try to negotiate it away."}]}, {"id": 11, "emotional_state": "Afraid / Insecure", "situation": "Your partner mentions an ex-partner casually in conversation.", "options": [{"type": "anxious", "text": "I spiral into jealousy and insecurity, ask questions like 'Do you still have feelings for them?' and need constant reassurance."}, {"type": "secure", "text": "I notice a small pang of insecurity but recognize it's normal. I listen without reacting defensively and trust the relationship."}, {"type": "avoidant", "text": "I act like I don't care at all, make a dismissive comment, or build an emotional wall to protect myself from feeling threatened."}]}, {"id": 12, "emotional_state": "Sad / Hurt", "situation": "Your partner gave you critical feedback about something personal (your communication style, a habit, etc.).", "options": [{"type": "avoidant", "text": "I dismiss the feedback: 'You're too sensitive' or 'That's just how I am,' and shut down the conversation to avoid vulnerability."}, {"type": "anxious", "text": "I feel crushed, overly self-blaming, and immediately seek reassurance: 'Do you still love me?' 'Am I a bad person?'"}, {"type": "secure", "text": "I feel the sting but take a breath and say: 'That's hard to hear, but I want to understand. Can you give me an example so I can reflect on it?'"}]}, {"id": 13, "emotional_state": "Angry / Frustrated", "situation": "You've asked your partner multiple times to help more with household tasks and nothing has changed.", "options": [{"type": "avoidant", "text": "I stop asking, do everything myself in resentful silence, and emotionally check out of the relationship."}, {"type": "secure", "text": "I sit down and say firmly but calmly: 'This is important to me and it hasn't changed. We need to find a solution together or this will keep being a problem.'"}, {"type": "anxious", "text": "I explode emotionally, cry, or threaten the relationship: 'If you cared you would help!' while fearing they'll leave if I'm too demanding."}]}, {"id": 14, "emotional_state": "Conflict / Disagreement", "situation": "Your partner criticizes something you did in front of friends and you feel embarrassed.", "options": [{"type": "secure", "text": "Later, in private, I say: 'When you criticized me in front of our friends, I felt embarrassed. I'd appreciate if we could talk about these things privately.'"}, {"type": "avoidant", "text": "I make a sarcastic comment back or ice them out for days, refusing to discuss what happened."}, {"type": "anxious", "text": "I stay silent but ruminate for hours or days, then bring it up in an emotional outburst seeking apology and validation."}]}, {"id": 15, "emotional_state": "Happy / Excited", "situation": "Your partner shares exciting personal news (new hobby, achievement, personal growth moment).", "options": [{"type": "avoidant", "text": "I give a brief, unenthusiastic response: 'That's nice,' and change the subject, uncomfortable with their emotional openness."}, {"type": "anxious", "text": "I feel happy but also insecure\u2014'Are they outgrowing me?'\u2014and I make it about the relationship: 'Does this mean you'll have less time for me?'"}, {"type": "secure", "text": "I respond with genuine enthusiasm: 'That's amazing! Tell me more!' and share in their joy without making it about myself."}]}, {"id": 16, "emotional_state": "Sad / Hurt", "situation": "During a group dinner, your partner made a joke at your expense and everyone laughed. You're now feeling hurt.", "options": [{"type": "anxious", "text": "I feel devastated and either confront them immediately in front of everyone or send multiple texts later asking why they did that."}, {"type": "secure", "text": "I feel hurt but wait until we're alone to say: 'That joke earlier made me feel uncomfortable. Can we talk about it?'"}, {"type": "avoidant", "text": "I act like nothing happened, stay silent, and withdraw emotionally for the rest of the evening."}]}, {"id": 17, "emotional_state": "Afraid / Insecure", "situation": "Your partner is spending more time with a new friend and seems really enthusiastic about them.", "options": [{"type": "avoidant", "text": "I tell myself I don't care and start pulling away emotionally, spending more time on my own activities."}, {"type": "anxious", "text": "I feel threatened and start asking questions about this person, looking for reassurance that I'm still important."}, {"type": "secure", "text": "I notice a twinge of insecurity but I'm happy they're making new connections. If it bothers me, I can talk about it."}]}, {"id": 18, "emotional_state": "Stressed / Overloaded", "situation": "You have a deadline tomorrow and your partner asks you to attend a social event with them tonight.", "options": [{"type": "anxious", "text": "I agree to go even though I'm stressed, because I don't want to disappoint them or have them think I don't care."}, {"type": "avoidant", "text": "I say no abruptly without explanation or get annoyed that they're asking when I'm obviously busy."}, {"type": "secure", "text": "I explain: 'I'd love to, but I have a deadline tomorrow and I'm stressed. Can we plan something for this weekend instead?'"}]}, {"id": 19, "emotional_state": "Vulnerable / Needing Closeness", "situation": "You're going through a difficult time and could really use emotional support from your partner.", "options": [{"type": "avoidant", "text": "I don't mention it. I handle my problems alone and don't want to burden anyone or appear weak."}, {"type": "secure", "text": "I reach out and say: 'I'm going through something difficult right now and could use your support. Do you have time to talk?'"}, {"type": "anxious", "text": "I hint that something is wrong and wait for them to notice and ask, feeling hurt if they don't pick up on it immediately."}]}, {"id": 20, "emotional_state": "Afraid / Insecure", "situation": "Your partner hasn't replied to your messages all day, which is unusual for them.", "options": [{"type": "avoidant", "text": "I don't think much of it and don't reach out either. If they need something, they'll contact me."}, {"type": "anxious", "text": "I send multiple messages asking if everything is okay, if they're mad at me, and worry something is wrong with us."}, {"type": "secure", "text": "I assume they're busy and I'll hear from them when they can. If it continues, I'll check in: 'Hey, haven't heard from you. Everything okay?'"}]}];
 
         let currentQuestion = 0;
         let answers = new Array(scenarios.length).fill(null);
+        let answerDetails = new Array(scenarios.length).fill(null);
 
         function startQuiz() {
             document.getElementById('introContainer').style.display = 'none';
@@ -435,44 +509,44 @@
             currentQuestion = index;
             const scenario = scenarios[index];
 
-            // Update progress
             const progress = ((index + 1) / scenarios.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
 
-            // Update counter
             document.getElementById('questionCounter').textContent = `Question ${index + 1} of ${scenarios.length}`;
-
-            // Update emotional state
             document.getElementById('emotionalState').textContent = scenario.emotional_state;
-
-            // Update situation
             document.getElementById('situation').textContent = scenario.situation;
 
-            // Update options
-            const optionsHtml = `
-                <div class="option ${answers[index] === 'anxious' ? 'selected' : ''}" onclick="selectOption('anxious')">
-                    <div class="option-label">A) Anxious Response</div>
-                    <div class="option-text">${scenario.option_anxious}</div>
-                </div>
-                <div class="option ${answers[index] === 'avoidant' ? 'selected' : ''}" onclick="selectOption('avoidant')">
-                    <div class="option-label">B) Avoidant Response</div>
-                    <div class="option-text">${scenario.option_avoidant}</div>
-                </div>
-                <div class="option ${answers[index] === 'secure' ? 'selected' : ''}" onclick="selectOption('secure')">
-                    <div class="option-label">C) Secure Response</div>
-                    <div class="option-text">${scenario.option_secure}</div>
-                </div>
-            `;
+            let optionsHtml = '';
+            scenario.options.forEach((option, i) => {
+                const letter = String.fromCharCode(65 + i); // A, B, C
+                const isSelected = answerDetails[index] && answerDetails[index].type === option.type;
+                optionsHtml += `
+                    <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${i})">
+                        <div class="option-label">${letter}) Response ${letter}</div>
+                        <div class="option-text">${option.text}</div>
+                    </div>
+                `;
+            });
             document.getElementById('options').innerHTML = optionsHtml;
 
-            // Update buttons
             document.getElementById('prevBtn').style.visibility = index === 0 ? 'hidden' : 'visible';
             document.getElementById('nextBtn').disabled = answers[index] === null;
             document.getElementById('nextBtn').textContent = index === scenarios.length - 1 ? 'See Results' : 'Next';
         }
 
-        function selectOption(type) {
-            answers[currentQuestion] = type;
+        function selectOption(optionIndex) {
+            const scenario = scenarios[currentQuestion];
+            const selectedOption = scenario.options[optionIndex];
+
+            answers[currentQuestion] = selectedOption.type;
+            answerDetails[currentQuestion] = {
+                type: selectedOption.type,
+                text: selectedOption.text,
+                situation: scenario.situation,
+                state: scenario.emotional_state,
+                questionId: scenario.id
+            };
+
             showQuestion(currentQuestion);
         }
 
@@ -491,7 +565,6 @@
         }
 
         function showResults() {
-            // Calculate scores
             const anxiousCount = answers.filter(a => a === 'anxious').length;
             const avoidantCount = answers.filter(a => a === 'avoidant').length;
             const secureCount = answers.filter(a => a === 'secure').length;
@@ -501,37 +574,34 @@
             const avoidantPercent = Math.round((avoidantCount / total) * 100);
             const securePercent = Math.round((secureCount / total) * 100);
 
-            // Hide quiz, show results
             document.getElementById('quizContainer').style.display = 'none';
             document.getElementById('resultsContainer').style.display = 'block';
 
-            // Display scores
             document.getElementById('scoresContainer').innerHTML = `
-                <div class="score-card anxious">
-                    <div class="score-label">Anxious</div>
+                <div class="score-card pattern-a">
+                    <div class="score-label">Pattern A</div>
                     <div class="score-value">${anxiousCount}</div>
                     <div class="score-percentage">${anxiousPercent}%</div>
                 </div>
-                <div class="score-card avoidant">
-                    <div class="score-label">Avoidant</div>
+                <div class="score-card pattern-b">
+                    <div class="score-label">Pattern B</div>
                     <div class="score-value">${avoidantCount}</div>
                     <div class="score-percentage">${avoidantPercent}%</div>
                 </div>
-                <div class="score-card secure">
-                    <div class="score-label">Secure</div>
+                <div class="score-card pattern-c">
+                    <div class="score-label">Pattern C</div>
                     <div class="score-value">${secureCount}</div>
                     <div class="score-percentage">${securePercent}%</div>
                 </div>
             `;
 
-            // Create radar chart
             const ctx = document.getElementById('radarChart').getContext('2d');
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Anxious', 'Avoidant', 'Secure'],
+                    labels: ['Pattern A', 'Pattern B', 'Pattern C'],
                     datasets: [{
-                        label: 'Your Attachment Profile',
+                        label: 'Your Profile',
                         data: [anxiousCount, avoidantCount, secureCount],
                         fill: true,
                         backgroundColor: 'rgba(102, 126, 234, 0.2)',
@@ -550,7 +620,7 @@
                             beginAtZero: true,
                             max: total,
                             ticks: {
-                                stepSize: Math.ceil(total / 5)
+                                stepSize: 5
                             }
                         }
                     },
@@ -562,13 +632,64 @@
                 }
             });
 
-            // Scroll to top
+            // Show growth opportunities
+            const nonSecureAnswers = answerDetails.filter((detail, index) => detail && detail.type !== 'secure');
+
+            if (nonSecureAnswers.length > 0) {
+                let growthHtml = '<h3>Growth Opportunities</h3>';
+                growthHtml += `<p>Here are the ${nonSecureAnswers.length} scenarios where you can practice more balanced responses:</p>`;
+
+                nonSecureAnswers.forEach((detail, index) => {
+                    // Find the secure option for this question
+                    const scenario = scenarios.find(s => s.id === detail.questionId);
+                    const secureOption = scenario.options.find(opt => opt.type === 'secure');
+
+                    growthHtml += `
+                        <div class="growth-item">
+                            <div class="growth-item-header">Scenario ${detail.questionId}: ${detail.state}</div>
+                            <div class="growth-item-situation"><strong>Situation:</strong> ${detail.situation}</div>
+                            <div class="growth-item-response"><strong>Your response:</strong> ${detail.text}</div>
+                            <div class="growth-item-better"><strong>💡 Try this instead:</strong> ${secureOption.text}</div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('growthAreas').innerHTML = growthHtml;
+            } else {
+                document.getElementById('growthAreas').innerHTML = `
+                    <h3>Excellent Work!</h3>
+                    <p>You demonstrated balanced responses in all scenarios. Continue practicing these healthy relationship patterns!</p>
+                `;
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function shareResults() {
+            const anxiousCount = answers.filter(a => a === 'anxious').length;
+            const avoidantCount = answers.filter(a => a === 'avoidant').length;
+            const secureCount = answers.filter(a => a === 'secure').length;
+            const total = scenarios.length;
+
+            const url = window.location.href;
+            const text = `I completed the Attachment Style Assessment!\n\nMy Results:\nPattern A: ${anxiousCount}/${total}\nPattern B: ${avoidantCount}/${total}\nPattern C: ${secureCount}/${total}\n\nTake the assessment: ${url}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Attachment Style Results',
+                    text: text
+                });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Results copied to clipboard! You can now paste and share them.');
+                });
+            }
         }
 
         function restartQuiz() {
             currentQuestion = 0;
             answers = new Array(scenarios.length).fill(null);
+            answerDetails = new Array(scenarios.length).fill(null);
             document.getElementById('resultsContainer').style.display = 'none';
             document.getElementById('introContainer').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
